@@ -22,18 +22,18 @@ serve(async (req) => {
       );
     }
 
-    // Detect if it's a question
-    const isQuestion = /(\?|what|how|why|when|where|who|which|can|could|would|should|is|are|do|does)/i.test(transcription);
+    // More flexible question detection - includes commands, requests, and questions
+    const isQuestionOrRequest = /(\?|what|how|why|when|where|who|which|can|could|would|should|is|are|do|does|did|will|tell|explain|describe|define|show|give)/i.test(transcription);
 
-    if (!isQuestion) {
-      console.log('Not a question, skipping AI response');
+    if (!isQuestionOrRequest) {
+      console.log('Not a question or request, skipping AI response');
       return new Response(
         JSON.stringify({ answer: null, question: null }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('Question detected, generating answer...');
+    console.log('Question or request detected, generating answer...');
 
     // Call Lovable AI for instant answer generation
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
@@ -52,7 +52,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful AI assistant that provides concise, accurate answers. Keep responses to 2-3 sentences maximum. Be direct and factual.'
+            content: 'You are a helpful AI assistant for a real-time Q&A system. Provide concise, accurate answers in 2-3 sentences maximum. Be direct and factual. If the input is a question, command, or request for information, provide a helpful response.'
           },
           {
             role: 'user',
