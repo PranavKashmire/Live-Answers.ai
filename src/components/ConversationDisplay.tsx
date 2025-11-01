@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Card } from './ui/card';
 
 export interface Message {
@@ -11,8 +12,20 @@ interface ConversationDisplayProps {
 }
 
 export const ConversationDisplay = ({ messages }: ConversationDisplayProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Auto-scroll to bottom when new messages arrive
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [messages]);
+
   return (
-    <div className="space-y-4 max-h-96 overflow-y-auto p-4">
+    <div ref={scrollRef} className="space-y-4 max-h-96 overflow-y-auto p-4 scroll-smooth">
       {messages.length === 0 ? (
         <div className="text-center text-muted-foreground py-12">
           <p className="text-lg">Start recording to begin</p>
