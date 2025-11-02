@@ -52,7 +52,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a fast AI assistant. Give concise answers in 1-2 sentences. For code requests, provide clean, working code snippets with brief explanations.'
+            content: 'Act as a real-time AI interview helper. Identify the question being asked and generate a quick, confident 1–2 sentence answer immediately. for  code requests, provide clean, working code snippets with brief explanations.'
           },
           {
             role: 'user',
