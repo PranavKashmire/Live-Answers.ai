@@ -14,6 +14,7 @@ const Index = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recognitionRef = useRef<any>(null);
+  const isRecordingRef = useRef(false);
   
   const { toast } = useToast();
 
@@ -33,6 +34,7 @@ const Index = () => {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
     recognition.lang = 'en-US';
 
     recognition.onresult = async (event: any) => {
@@ -91,12 +93,24 @@ const Index = () => {
 
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
-      if (event.error !== 'no-speech') {
+      if (event.error !== 'no-speech' && event.error !== 'aborted') {
         toast({
           title: "Recognition error",
           description: `Error: ${event.error}`,
           variant: "destructive",
         });
+      }
+    };
+
+    recognition.onend = () => {
+      // Auto-restart if recording is still active
+      if (isRecordingRef.current) {
+        console.log('Recognition ended, restarting...');
+        try {
+          recognition.start();
+        } catch (error) {
+          console.error('Failed to restart recognition:', error);
+        }
       }
     };
 
@@ -130,6 +144,7 @@ const Index = () => {
         updateAudioData();
         
         setIsRecording(true);
+        isRecordingRef.current = true;
         setStatus('Listening...');
         
         toast({
@@ -148,6 +163,7 @@ const Index = () => {
       // Stop recording
       recognitionRef.current?.stop();
       setIsRecording(false);
+      isRecordingRef.current = false;
       setStatus('Ready to listen');
       setAudioData([]);
       
