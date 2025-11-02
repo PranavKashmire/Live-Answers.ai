@@ -52,14 +52,14 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a fast AI assistant. Give direct, ultra-concise answers in 1-2 sentences max. Be brief and factual.'
+            content: 'You are a fast AI assistant. Give concise answers in 1-2 sentences. For code requests, provide clean, working code snippets with brief explanations.'
           },
           {
             role: 'user',
             content: transcription
           }
         ],
-        max_completion_tokens: 50,
+        max_completion_tokens: 150,
       }),
     });
 
