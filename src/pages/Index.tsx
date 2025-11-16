@@ -12,6 +12,7 @@ const Index = () => {
   const [status, setStatus] = useState('Ready to listen');
   const [audioData, setAudioData] = useState<number[]>([]);
   const [isFloating, setIsFloating] = useState(false);
+  const [isStealthMode, setIsStealthMode] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -184,30 +185,44 @@ const Index = () => {
         onClose={() => setIsFloating(false)}
       />
       
-      <div className="max-w-4xl w-full space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Live Answer AI
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Real-time AI assistant that detects questions and generates instant answers
-          </p>
+      {isStealthMode ? (
+        // Minimal stealth interface - hidden during screen sharing
+        <div className="fixed top-4 left-4 z-50">
+          <button
+            onClick={() => setIsStealthMode(false)}
+            className="bg-muted/50 hover:bg-muted text-foreground px-3 py-2 rounded-lg text-xs backdrop-blur-sm transition-all"
+            title="Exit Stealth Mode"
+          >
+            {isRecording ? '🔴' : '⚫'} Show Interface
+          </button>
         </div>
+      ) : (
+        <div className="max-w-4xl w-full space-y-8">
+          <div className="text-center space-y-2">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Live Answer AI
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              Real-time AI assistant that detects questions and generates instant answers
+            </p>
+          </div>
 
-        <AudioVisualizer isRecording={isRecording} audioData={audioData} />
+          <AudioVisualizer isRecording={isRecording} audioData={audioData} />
 
-        <ConversationDisplay messages={messages} />
+          <ConversationDisplay messages={messages} />
 
-        <div className="flex justify-center pt-4">
-          <RecordingControls 
-            isRecording={isRecording} 
-            onToggleRecording={toggleRecording}
-            status={status}
-            onToggleFloating={() => setIsFloating(!isFloating)}
-            isFloating={isFloating}
-          />
+          <div className="flex justify-center pt-4">
+            <RecordingControls 
+              isRecording={isRecording} 
+              onToggleRecording={toggleRecording}
+              status={status}
+              onToggleFloating={() => setIsFloating(!isFloating)}
+              isFloating={isFloating}
+              onToggleStealth={() => setIsStealthMode(true)}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
