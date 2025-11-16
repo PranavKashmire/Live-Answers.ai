@@ -1,5 +1,5 @@
 import { Button } from './ui/button';
-import { Mic, MicOff, ExternalLink } from 'lucide-react';
+import { Mic, MicOff, ExternalLink, EyeOff } from 'lucide-react';
 
 interface RecordingControlsProps {
   isRecording: boolean;
@@ -7,6 +7,7 @@ interface RecordingControlsProps {
   status: string;
   onToggleFloating?: () => void;
   isFloating?: boolean;
+  onToggleStealth?: () => void;
 }
 
 export const RecordingControls = ({ 
@@ -14,7 +15,8 @@ export const RecordingControls = ({
   onToggleRecording, 
   status, 
   onToggleFloating,
-  isFloating 
+  isFloating,
+  onToggleStealth
 }: RecordingControlsProps) => {
   return (
     <div className="flex flex-col items-center gap-4">
@@ -46,6 +48,19 @@ export const RecordingControls = ({
             {isFloating ? 'Close Float' : 'Float Answers'}
           </Button>
         )}
+        
+        {onToggleStealth && (
+          <Button
+            onClick={onToggleStealth}
+            size="lg"
+            variant="outline"
+            className="h-12 gap-2"
+            title="Hide interface for screen sharing"
+          >
+            <EyeOff className="w-5 h-5" />
+            Stealth Mode
+          </Button>
+        )}
       </div>
       
       <div className="text-center">
@@ -55,7 +70,7 @@ export const RecordingControls = ({
         <p className="text-xs text-muted-foreground mt-1">{status}</p>
         {isFloating && (
           <p className="text-xs text-primary mt-1 font-medium">
-            Floating window active - answers appear on top of other tabs
+            💡 Tip: Use Stealth Mode before screen sharing to hide this tab
           </p>
         )}
       </div>
