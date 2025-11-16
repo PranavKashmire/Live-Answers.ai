@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { AudioVisualizer } from '@/components/AudioVisualizer';
 import { ConversationDisplay, Message } from '@/components/ConversationDisplay';
 import { RecordingControls } from '@/components/RecordingControls';
+import { FloatingAnswerWindow } from '@/components/FloatingAnswerWindow';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -10,6 +11,7 @@ const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [status, setStatus] = useState('Ready to listen');
   const [audioData, setAudioData] = useState<number[]>([]);
+  const [isFloating, setIsFloating] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -176,6 +178,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8">
+      <FloatingAnswerWindow 
+        messages={messages}
+        isOpen={isFloating}
+        onClose={() => setIsFloating(false)}
+      />
+      
       <div className="max-w-4xl w-full space-y-8">
         <div className="text-center space-y-2">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
@@ -195,6 +203,8 @@ const Index = () => {
             isRecording={isRecording} 
             onToggleRecording={toggleRecording}
             status={status}
+            onToggleFloating={() => setIsFloating(!isFloating)}
+            isFloating={isFloating}
           />
         </div>
       </div>
